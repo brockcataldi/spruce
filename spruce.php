@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:  Spruce Core
+ * Plugin Name:  Spruce
  * Plugin URI:
  * Description:
  * Author:       Brock Cataldi
