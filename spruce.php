@@ -21,6 +21,18 @@ if ( ! function_exists( 'add_action' ) ) {
 // Defining basic constants.
 define( 'SPRUCE_VERSION', '1.0' );
 define( 'SPRUCE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SPRUCE_ACF_BLOCKS_DIR', get_stylesheet_directory() . '/blocks/acf/' );
+
+// Default Configuration Options.
+define(
+	'SPRUCE_DEFAULT_CONFIGURATION',
+	array(
+		'blocks' => array(
+			'acf'  => 'auto',
+			'core' => 'auto',
+		),
+	)
+);
 
 // Including the Spruce Base Class.
 require_once SPRUCE_PLUGIN_DIR . 'class-spruce.php';
