@@ -45,6 +45,7 @@ class Spruce {
 	public function __construct() {
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
 		add_action( 'acf/init', array( $this, 'acf_init' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 	}
 
 	/**
@@ -56,12 +57,11 @@ class Spruce {
 	 */
 	public function get( $key ) {
 		$key_type = gettype( $key );
-		$custom   = false === $this->custom_configuration_loaded;
 
 		if ( 'string' === $key_type ) {
-			return $this->get_string( $key, $custom );
+			return $this->get_string( $key, $this->custom_configuration_loaded );
 		} elseif ( 'array' === $key_type ) {
-			return $this->get_array( $key, $custom );
+			return $this->get_array( $key, $this->custom_configuration_loaded );
 		} else {
 			return null;
 		}
@@ -149,11 +149,9 @@ class Spruce {
 	 * @return bool $file_load_result whether or not the file was loaded successfully
 	 */
 	public function load_configuration() {
-
 		if ( true === $this->load_file( get_stylesheet_directory() . '/spruce.config.php' ) ) {
 			return defined( 'SPRUCE_CONFIGURATION' );
 		}
-
 		return false;
 	}
 
@@ -177,19 +175,23 @@ class Spruce {
 	}
 
 	/**
-	 * Load blocks via the config options, either automatically or manually
+	 * Load acf blocks via the config options, either automatically or manually
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	private function load_blocks() {
+	private function load_acf_blocks() {
 		$block_loading_option = $this->get( array( 'blocks', 'acf' ) );
+
+		if ( false === $block_loading_option ) {
+			return;
+		}
 
 		if ( 'array' === gettype( $block_loading_option ) ) {
 
 			foreach ( $block_loading_option as $block ) {
-				$this->load_block( $block );
+				$this->load_acf_block( $block );
 			}
 		} elseif ( self::AUTOMATIC === $block_loading_option ) {
 
@@ -198,7 +200,7 @@ class Spruce {
 			if ( false !== $entries ) {
 				foreach ( $entries as $entry ) {
 					if ( false === strpos( $entry, '.' ) ) {
-						$this->load_block( $entry );
+						$this->load_acf_block( $entry );
 					}
 				}
 			}
@@ -214,10 +216,47 @@ class Spruce {
 	 *
 	 * @return void
 	 */
-	private function load_block( $block ) {
+	private function load_acf_block( $block ) {
 		$loaded = $this->load_file( sprintf( '%s/%s/class-%s.block.php', get_stylesheet_directory() . '/blocks/acf/', $block, $block ) );
 		if ( true === $loaded ) {
 			call_user_func( $this->classify( $block ) . '_Block::register' );
+		}
+	}
+
+	/**
+	 * Loading stylesheets passed into the styles config
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private function load_styles() {
+		$styles = $this->get( 'styles' );
+
+		if ( false === $styles ) {
+			return;
+		}
+
+		foreach ( $styles as $style ) {
+			if ( true === array_key_exists( 'name', $style ) ) {
+				if ( true === array_key_exists( 'file', $style ) ) {
+					wp_enqueue_style(
+						$style['name'],
+						sprintf( '%s/%s', get_stylesheet_directory_uri(), $style['file'] ),
+						( false === array_key_exists( 'deps', $style ) ) ? array() : $style['deps'],
+						( false === array_key_exists( 'ver', $style ) ) ? null : $style['ver'],
+						( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
+					);
+				} elseif ( true === array_key_exists( 'uri', $style ) ) {
+					wp_enqueue_style(
+						$style['name'],
+						$style['uri'],
+						( false === array_key_exists( 'deps', $style ) ) ? array() : $style['deps'],
+						( false === array_key_exists( 'ver', $style ) ) ? null : $style['ver'],
+						( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
+					);
+				}
+			}
 		}
 	}
 
@@ -253,11 +292,10 @@ class Spruce {
 	 * @return array|boolean $entries returns false when the path doesn't exist
 	 */
 	private function scan( $path ) {
-
 		$scan = scandir( $path );
-
 		return ( false === $scan ) ? false : array_diff( $scan, array( '..', '.' ) );
 	}
+
 
 	/**
 	 * After_setup_theme hook.
@@ -267,7 +305,6 @@ class Spruce {
 	 * @return void
 	 */
 	public function after_setup_theme() {
-
 		// Attempting to load the configuration constant.
 		$this->custom_configuration_loaded = $this->load_configuration();
 	}
@@ -282,7 +319,20 @@ class Spruce {
 	 * @return void
 	 */
 	public function acf_init() {
-		$this->load_blocks();
+		$this->load_acf_blocks();
+	}
+
+	/**
+	 * Enqueue Scripts and Styles Hooks.
+	 *
+	 * Loading styles and specific styles based on core blocks
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function wp_enqueue_scripts() {
+		$this->load_styles();
 	}
 
 	/**
