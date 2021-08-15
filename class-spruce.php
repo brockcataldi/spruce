@@ -199,7 +199,7 @@ class Spruce {
 
 			if ( false !== $entries ) {
 				foreach ( $entries as $entry ) {
-					if ( false === strpos( $entry, '.' ) ) {
+					if ( false === strpos( $entry, '.' ) ) { // exclude files at a root level.
 						$this->load_acf_block( $entry );
 					}
 				}
@@ -243,20 +243,113 @@ class Spruce {
 					wp_enqueue_style(
 						$style['name'],
 						sprintf( '%s/%s', get_stylesheet_directory_uri(), $style['file'] ),
-						( false === array_key_exists( 'deps', $style ) ) ? array() : $style['deps'],
-						( false === array_key_exists( 'ver', $style ) ) ? null : $style['ver'],
+						( false === array_key_exists( 'dependencies', $style ) ) ? array() : $style['dependencies'],
+						( false === array_key_exists( 'version', $style ) ) ? null : $style['version'],
 						( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
 					);
 				} elseif ( true === array_key_exists( 'uri', $style ) ) {
 					wp_enqueue_style(
 						$style['name'],
 						$style['uri'],
-						( false === array_key_exists( 'deps', $style ) ) ? array() : $style['deps'],
-						( false === array_key_exists( 'ver', $style ) ) ? null : $style['ver'],
+						( false === array_key_exists( 'dependencies', $style ) ) ? array() : $style['dependencies'],
+						( false === array_key_exists( 'version', $style ) ) ? null : $style['version'],
 						( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
 					);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Loading javascripts passed into the scripts config
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private function load_scripts() {
+		$scripts = $this->get( 'scripts' );
+
+		if ( false === $scripts ) {
+			return;
+		}
+		foreach ( $scripts as $script ) {
+			if ( true === array_key_exists( 'name', $script ) ) {
+				if ( true === array_key_exists( 'file', $script ) ) {
+					wp_enqueue_script(
+						$script['name'],
+						sprintf( '%s/%s', get_stylesheet_directory_uri(), $style['file'] ),
+						( false === array_key_exists( 'dependencies', $script ) ) ? array() : $script['dependencies'],
+						( false === array_key_exists( 'version', $script ) ) ? null : $script['version'],
+						( false === array_key_exists( 'footer', $script ) ) ? false : $script['footer']
+					);
+				} elseif ( true === array_key_exists( 'uri', $script ) ) {
+					wp_enqueue_script(
+						$script['name'],
+						$script['uri'],
+						( false === array_key_exists( 'dependencies', $script ) ) ? array() : $script['dependencies'],
+						( false === array_key_exists( 'version', $script ) ) ? null : $script['version'],
+						( false === array_key_exists( 'footer', $script ) ) ? false : $script['footer']
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Loading core block stylesheets, will be adapted for other block providers eventually.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private function load_blocks_styles() {
+
+		$prefix               = 'core';
+		$block_loading_option = $this->get( array( 'blocks', $prefix ) );
+
+		if ( 'array' === gettype( $block_loading_option ) ) {
+
+			foreach ( $block_loading_option as $block ) {
+				$this->load_block_styles( $prefix, $block );
+			}
+		} elseif ( self::AUTOMATIC === $block_loading_option ) {
+
+			$entries = $this->scan( get_stylesheet_directory() . '/blocks/' . $prefix );
+
+			if ( false !== $entries ) {
+				foreach ( $entries as $entry ) {
+					if ( false === strpos( $entry, '.' ) ) { // exclude files at a root level.
+						$this->load_block_styles( $prefix, $entry );
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Loading core block stylesheets, will be adapted for other block providers eventually.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $prefix the block prefix.
+	 * @param string $block the block name.
+	 *
+	 * @return void
+	 */
+	private function load_block_styles( $prefix, $block ) {
+		if ( true === has_block( sprintf( '%s/%s', $prefix, $block ) ) ) {
+
+			// phpcs:disable
+			wp_enqueue_style(
+				sprintf( '%s-%s', $prefix, $block ),
+				sprintf( '%s/build/%s/%s.css', get_stylesheet_directory_uri(), $prefix, $block ),
+				array(),
+				null,
+				'all'
+			);
+			// phpcs:enable
 		}
 	}
 
@@ -279,7 +372,6 @@ class Spruce {
 				explode( '_', $string )
 			)
 		);
-
 	}
 
 	/**
@@ -295,7 +387,6 @@ class Spruce {
 		$scan = scandir( $path );
 		return ( false === $scan ) ? false : array_diff( $scan, array( '..', '.' ) );
 	}
-
 
 	/**
 	 * After_setup_theme hook.
@@ -333,6 +424,8 @@ class Spruce {
 	 */
 	public function wp_enqueue_scripts() {
 		$this->load_styles();
+		$this->load_blocks_styles();
+		$this->load_scripts();
 	}
 
 	/**

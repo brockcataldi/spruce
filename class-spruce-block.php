@@ -46,6 +46,13 @@ class Spruce_Block {
 	public static array $fields = array();
 
 	/**
+	 * Spruce Parameters to create the block. Mainly used for enqueue the javascript files.
+	 *
+	 * @var array $params
+	 */
+	public static array $params = array();
+
+	/**
 	 * Format the options property on the static class to create the block.
 	 *
 	 * @since 1.0.0
@@ -71,11 +78,31 @@ class Spruce_Block {
 		}
 
 		if ( ! array_key_exists( 'enqueue_assests', $options ) ) {
-			if ( ! array_key_exists( 'enqueue_style', $options ) ) {
-				$options['enqueue_style'] = sprintf( '%s/build/acf/%s.css', get_stylesheet_directory_uri(), static::$key );
-			}
 
-			// TODO: Add a scripts option.
+			$key                       = static::$key;
+			$params                    = static::$params;
+			$options['enqueue_assets'] = function() use ( $key, $params ) {
+
+				// phpcs:disable
+				wp_enqueue_style(
+					'block-acf-' . $key,
+					sprintf( '%s/build/acf/%s.css', get_stylesheet_directory_uri(), $key )
+				);
+				// phpcs:enable
+
+				if ( array_key_exists( 'script', $params )
+				&& true === $params['script'] ) {
+
+					wp_enqueue_script(
+						'block-acf-' . $key,
+						sprintf( '%s/build/acf/%s.js', get_stylesheet_directory_uri(), $key ),
+						( array_key_exists( 'dependencies', $params ) ) ? $params['dependencies'] : array(),
+						( array_key_exists( 'version', $params ) ) ? $params['version'] : array(),
+						( array_key_exists( 'footer', $params ) ) ? $params['footer'] : true,
+					);
+				}
+			};
+
 		}
 
 		return $options;
