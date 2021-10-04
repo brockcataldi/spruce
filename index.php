@@ -7,9 +7,7 @@
 
 // Silence is golden.
 
-
 // phpcs:disable
-
 /**
  *  TODO List
  *  
@@ -33,15 +31,15 @@
  *      Styling Globals and Utilities [Done]
  * 
  *  Includes
- *      Bundles (actions and filters bundle together to finish a task ex. Disabling Comments)
  *      Post Types [Done]
  *      Taxonomies [Done]
  *      Customizations []
  *      Field Groups Loader
+ *      Bundles (actions and filters bundle together to finish a task ex. Disabling Comments)
  * 
- *  Supports (theme-supports) [Done]
- *  Menus []
- *  Sidebars []
+ *  Supports [Done]
+ *  Menus [Done]
+ *  Sidebars [Done]
  *
  *  Options Page(s)
  *  

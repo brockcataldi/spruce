@@ -34,9 +34,11 @@ define(
 		),
 		'styles'     => array(),
 		'scripts'    => array(),
+		'supports'   => array(),
+		'menus'		 => array(),
+		'sidebars'	 => array(),
 		'post-types' => 'auto',
 		'taxonomies' => 'auto',
-		'supports'   => array(),
 	)
 );
 

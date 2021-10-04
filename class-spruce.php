@@ -34,10 +34,13 @@ require_once SPRUCE_PLUGIN_DIR . 'class-spruce-taxonomy.php';
 class Spruce {
 
 	/**
-	 * A string value in the config file for Automatic
+	 * A string value in the config file for Automatic.
 	 */
 	const AUTOMATIC = 'auto';
 
+	/**
+	 * Includes patterns.
+	 */
 	const INCLUDES = array(
 		'post-types' => array(
 			'suffix'    => '_Post_Type',
@@ -441,6 +444,8 @@ class Spruce {
 	 * Load and apply all of the add_theme_support variables
 	 *
 	 * @since 1.0.0
+	 * 
+	 * @see https://developer.wordpress.org/reference/functions/add_theme_support/
 	 *
 	 * @throws Exception If the supports config option isn't an array.
 	 *
@@ -451,6 +456,10 @@ class Spruce {
 
 		if ( 'array' !== gettype( $supports_options ) ) {
 			throw new Exception( 'supports in the spruce.config.php must be an array' );
+		}
+
+		if( count($supports_options) == 0){
+			return;
 		}
 
 		foreach ( $supports_options as $key => $value ) {
@@ -465,6 +474,62 @@ class Spruce {
 					add_theme_support( $key, $value );
 					break;
 			}
+		}
+	}
+
+	/**
+	 * Load and registers all passed navigation menus
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @see https://developer.wordpress.org/reference/functions/add_theme_support/
+	 *
+	 * @throws Exception If the supports config option isn't an array.
+	 *
+	 * @return void
+	 */
+	private function load_menus(){
+		$menus_options = $this->get( 'menus' );
+
+		if ( 'array' !== gettype( $menus_options ) ) {
+			throw new Exception( 'menus in the spruce.config.php must be an array' );
+		}
+
+		if( count($menus_options) == 0){
+			return;
+		}
+
+		$menus = array_map(function($value){
+			return __($value, CHILD_THEME);
+		}, $menus_options);
+
+		register_nav_menus( $menus );
+	}
+
+	/**
+	 * Load and registers all passed navigation menus
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @see https://developer.wordpress.org/reference/functions/register_sidebar/
+	 *
+	 * @throws Exception If the supports config option isn't an array.
+	 *
+	 * @return void
+	 */
+	private function load_sidebars(){
+		$sidebars_options = $this->get( 'sidebars' );
+
+		if ( 'array' !== gettype( $sidebars_options ) ) {
+			throw new Exception( 'sidebars in the spruce.config.php must be an array' );
+		}
+
+		if( count($sidebars_options) == 0){
+			return;
+		}	
+
+		foreach($sidebars as $sidebar){
+			register_sidebar($sidebar);
 		}
 	}
 
@@ -524,6 +589,17 @@ class Spruce {
 	}
 
 	/**
+	 * Widgets_init hook.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function widgets_init(){
+		
+	}
+
+	/**
 	 * After_setup_theme hook.
 	 *
 	 * @since 1.0.0
@@ -534,6 +610,7 @@ class Spruce {
 		$this->custom_configuration_loaded = $this->load_configuration();
 
 		$this->load_supports();
+		$this->load_menus();
 	}
 
 	/**
