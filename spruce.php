@@ -22,15 +22,21 @@ if ( ! function_exists( 'add_action' ) ) {
 define( 'SPRUCE_VERSION', '1.0' );
 define( 'SPRUCE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SPRUCE_ACF_BLOCKS_DIR', get_stylesheet_directory() . '/blocks/acf/' );
+define( 'SPRUCE_INCLUDES_DIR', get_stylesheet_directory() . '/includes/' );
 
 // Default Configuration Options.
 define(
 	'SPRUCE_DEFAULT_CONFIGURATION',
 	array(
-		'blocks' => array(
+		'blocks'     => array(
 			'acf'  => 'auto',
 			'core' => 'auto',
 		),
+		'styles'     => array(),
+		'scripts'    => array(),
+		'post-types' => 'auto',
+		'taxonomies' => 'auto',
+		'supports'   => array(),
 	)
 );
 

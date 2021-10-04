@@ -15,6 +15,16 @@
 require_once SPRUCE_PLUGIN_DIR . 'class-spruce-block.php';
 
 /**
+ * Requiring the abstrct class for Post Types.
+ */
+require_once SPRUCE_PLUGIN_DIR . 'class-spruce-post-type.php';
+
+/**
+ * Requiring the abstrct class for Taxonomies.
+ */
+require_once SPRUCE_PLUGIN_DIR . 'class-spruce-taxonomy.php';
+
+/**
  * Spruce Class
  *
  * Used to be the bridge between spruce operations and the WordPress hooks and filters.
@@ -27,6 +37,21 @@ class Spruce {
 	 * A string value in the config file for Automatic
 	 */
 	const AUTOMATIC = 'auto';
+
+	const INCLUDES = array(
+		'post-types' => array(
+			'suffix'    => '_Post_Type',
+			'extension' => '.post-type.php',
+			'pattern'   => '/class-(.*)\.post-type\.php/',
+			'static'    => true,
+		),
+		'taxonomies' => array(
+			'suffix'    => '_Taxonomy',
+			'pattern'   => '/class-(.*)\.taxonomy\.php/',
+			'extension' => '.taxonomy.php',
+			'static'    => true,
+		),
+	);
 
 	/**
 	 * Whether or not the configuration file was successfully loaded.
@@ -46,6 +71,7 @@ class Spruce {
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
 		add_action( 'acf/init', array( $this, 'acf_init' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
+		add_action( 'init', array( $this, 'init' ) );
 	}
 
 	/**
@@ -53,7 +79,7 @@ class Spruce {
 	 *
 	 * @param string|array $key the key or multidimensional key from the config.
 	 *
-	 * @return any $value the value within the config file.
+	 * @return any the value within the config file.
 	 */
 	public function get( $key ) {
 		$key_type = gettype( $key );
@@ -125,7 +151,7 @@ class Spruce {
 	 * @param array $key multidimensional key from the config.
 	 * @param array $array whether or not to even attempt to load it from the custom config file.
 	 *
-	 * @return any $value the value within the config file.
+	 * @return any the value within the config file.
 	 */
 	private function search_array( $key, $array ) {
 		if ( 1 === count( $key ) ) {
@@ -146,7 +172,7 @@ class Spruce {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return bool $file_load_result whether or not the file was loaded successfully
+	 * @return bool whether or not the file was loaded successfully
 	 */
 	public function load_configuration() {
 		if ( true === $this->load_file( get_stylesheet_directory() . '/spruce.config.php' ) ) {
@@ -162,7 +188,7 @@ class Spruce {
 	 *
 	 * @param string $path the file path.
 	 *
-	 * @return bool $file_load_result whether or not the file was loaded successfully
+	 * @return bool whether or not the file was loaded successfully
 	 */
 	public function load_file( $path ) {
 
@@ -319,14 +345,13 @@ class Spruce {
 
 			if ( false !== $entries ) {
 				foreach ( $entries as $entry ) {
-					if ( false === strpos( $entry, '.' ) ) { // exclude files at a root level.
+					if ( false === strpos( $entry, '.' ) ) {
 						$this->load_block_styles( $prefix, $entry );
 					}
 				}
 			}
 		}
 	}
-
 
 	/**
 	 * Loading core block stylesheets, will be adapted for other block providers eventually.
@@ -354,6 +379,96 @@ class Spruce {
 	}
 
 	/**
+	 * Load all of the includes based on slug.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $type the type of includes.
+	 *
+	 * @return void
+	 */
+	private function load_includes( $type ) {
+		$loading_options = $this->get( $type );
+		$include         = self::INCLUDES[ $type ];
+
+		if ( 'array' === gettype( $loading_options ) ) {
+
+			foreach ( $loading_options  as $loading_option ) {
+				$this->load_include( $loading_option, $type, $include );
+			}
+		} elseif ( self::AUTOMATIC === $loading_options ) {
+
+			$entries = $this->scan( SPRUCE_INCLUDES_DIR . $type . '/' );
+
+			if ( false !== $entries ) {
+				foreach ( $entries as $entry ) {
+					if ( 1 === preg_match( $include['pattern'], $entry, $matches ) ) {
+						$this->load_include( $matches[1], $type, $include );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Load one of the includes file.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $name class slug.
+	 * @param string $type the type of include.
+	 * @param array  $include the includes data object.
+	 *
+	 * @return void
+	 */
+	private function load_include( $name, $type, $include ) {
+		$path       = SPRUCE_INCLUDES_DIR . $type . '/class-' . strtolower( $name ) . $include['extension'];
+		$class_name = $this->classify( $name . $include['suffix'] );
+
+		if ( true === file_exists( $path ) ) {
+			include_once $path;
+
+			if ( true === $include['static'] ) {
+				$class_name::register();
+			} else {
+				$temp = new $class_name();
+				$temp->register();
+			}
+		}
+	}
+
+	/**
+	 * Load and apply all of the add_theme_support variables
+	 *
+	 * @since 1.0.0
+	 *
+	 * @throws Exception If the supports config option isn't an array.
+	 *
+	 * @return void
+	 */
+	private function load_supports() {
+		$supports_options = $this->get( 'supports' );
+
+		if ( 'array' !== gettype( $supports_options ) ) {
+			throw new Exception( 'supports in the spruce.config.php must be an array' );
+		}
+
+		foreach ( $supports_options as $key => $value ) {
+			$key_type = gettype( $key );
+
+			switch ( $key_type ) {
+				case 'integer':
+					add_theme_support( $value );
+					break;
+
+				case 'string':
+					add_theme_support( $key, $value );
+					break;
+			}
+		}
+	}
+
+	/**
 	 * This uppercases each word and makes the separator an underscore.
 	 *
 	 * @since 1.0.0
@@ -369,7 +484,10 @@ class Spruce {
 				function( $word ) {
 					return ucfirst( $word );
 				},
-				explode( '_', $string )
+				explode(
+					'_',
+					str_replace( '-', '_', $string )
+				)
 			)
 		);
 	}
@@ -384,8 +502,25 @@ class Spruce {
 	 * @return array|boolean $entries returns false when the path doesn't exist
 	 */
 	private function scan( $path ) {
+
+		if ( false === file_exists( $path ) ) {
+			return false;
+		}
+
 		$scan = scandir( $path );
 		return ( false === $scan ) ? false : array_diff( $scan, array( '..', '.' ) );
+	}
+
+	/**
+	 * Init hook.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function init() {
+		$this->load_includes( 'post-types' );
+		$this->load_includes( 'taxonomies' );
 	}
 
 	/**
@@ -396,8 +531,9 @@ class Spruce {
 	 * @return void
 	 */
 	public function after_setup_theme() {
-		// Attempting to load the configuration constant.
 		$this->custom_configuration_loaded = $this->load_configuration();
+
+		$this->load_supports();
 	}
 
 	/**
