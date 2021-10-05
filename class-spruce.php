@@ -27,22 +27,22 @@ class Spruce {
 	 * Includes patterns.
 	 */
 	const INCLUDES = array(
-		'post-types'     => array(
+		'post-types' => array(
 			'suffix'    => '_Post_Type',
 			'extension' => '.post-type.php',
 			'pattern'   => '/class-(.*)\.post-type\.php/',
 			'static'    => true,
 		),
-		'taxonomies'     => array(
+		'taxonomies' => array(
 			'suffix'    => '_Taxonomy',
 			'pattern'   => '/class-(.*)\.taxonomy\.php/',
 			'extension' => '.taxonomy.php',
 			'static'    => true,
 		),
-		'customizations' => array(
-			'suffix'    => '_Customization',
-			'pattern'   => '/class-(.*)\.customization\.php/',
-			'extension' => '.customization.php',
+		'bundles'    => array(
+			'suffix'    => '_Bundle',
+			'pattern'   => '/class-(.*)\.bundle\.php/',
+			'extension' => '.bundle.php',
 			'static'    => false,
 		),
 	);
@@ -556,7 +556,6 @@ class Spruce {
 	 */
 	private function load_customizations( $wp_customize ) {
 		$customizations_options = $this->get( 'customizations' );
-		$include                = self::INCLUDES['customizations'];
 
 		if ( 'array' === gettype( $customizations_options ) ) {
 
@@ -569,7 +568,7 @@ class Spruce {
 
 			if ( false !== $entries ) {
 				foreach ( $entries as $entry ) {
-					if ( 1 === preg_match( $include['pattern'], $entry, $matches ) ) {
+					if ( 1 === preg_match( '/class-(.*)\.customization\.php/', $entry, $matches ) ) {
 						$this->load_customization( $matches[1], $wp_customize );
 					}
 				}
@@ -726,6 +725,7 @@ Powered By Spruce
 	public function after_setup_theme() {
 		$this->load_supports();
 		$this->load_menus();
+		$this->load_includes( 'bundles' );
 	}
 
 	/**

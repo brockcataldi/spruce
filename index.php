@@ -9,10 +9,9 @@
 
 // phpcs:disable
 /**
- *  TODO List
- *  
- *  THEME TODO LIST
+ *  Change Log
  * 
+ * === Version 1.0 ===
  *  Front End and Content Management [Done]
  *      ACF Block Loader
  *          Class [Done]
@@ -40,10 +39,14 @@
  *  Menus [Done]
  *  Sidebars [Done]
  *
+ * === Version 1.1 ===
  *  Field Groups Loader
  *  Options Page(s)
+ * 
+ * === Version 1.2 === 
+ *  Utility Functions
  *  
- * === Version 1.5 === 
+ * === Version 1.3 === 
  *  Image and Image Sizes
  * 
  * === Version 2 ===
