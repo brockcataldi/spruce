@@ -10,21 +10,6 @@
  */
 
 /**
- * Requiring the Base class for ACF Blocks.
- */
-require_once SPRUCE_PLUGIN_DIR . 'class-spruce-block.php';
-
-/**
- * Requiring the abstrct class for Post Types.
- */
-require_once SPRUCE_PLUGIN_DIR . 'class-spruce-post-type.php';
-
-/**
- * Requiring the abstrct class for Taxonomies.
- */
-require_once SPRUCE_PLUGIN_DIR . 'class-spruce-taxonomy.php';
-
-/**
  * Spruce Class
  *
  * Used to be the bridge between spruce operations and the WordPress hooks and filters.
@@ -42,17 +27,23 @@ class Spruce {
 	 * Includes patterns.
 	 */
 	const INCLUDES = array(
-		'post-types' => array(
+		'post-types'     => array(
 			'suffix'    => '_Post_Type',
 			'extension' => '.post-type.php',
 			'pattern'   => '/class-(.*)\.post-type\.php/',
 			'static'    => true,
 		),
-		'taxonomies' => array(
+		'taxonomies'     => array(
 			'suffix'    => '_Taxonomy',
 			'pattern'   => '/class-(.*)\.taxonomy\.php/',
 			'extension' => '.taxonomy.php',
 			'static'    => true,
+		),
+		'customizations' => array(
+			'suffix'    => '_Customization',
+			'pattern'   => '/class-(.*)\.customization\.php/',
+			'extension' => '.customization.php',
+			'static'    => false,
 		),
 	);
 
@@ -71,10 +62,14 @@ class Spruce {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
+		$this->custom_configuration_loaded = $this->load_configuration();
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
+		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
+		add_action( 'customize_register', array( $this, 'customize_register' ) );
 		add_action( 'acf/init', array( $this, 'acf_init' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) );
 		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'wp_head', array( $this, 'wp_head' ) );
 	}
 
 	/**
@@ -444,7 +439,7 @@ class Spruce {
 	 * Load and apply all of the add_theme_support variables
 	 *
 	 * @since 1.0.0
-	 * 
+	 *
 	 * @see https://developer.wordpress.org/reference/functions/add_theme_support/
 	 *
 	 * @throws Exception If the supports config option isn't an array.
@@ -458,7 +453,7 @@ class Spruce {
 			throw new Exception( 'supports in the spruce.config.php must be an array' );
 		}
 
-		if( count($supports_options) == 0){
+		if ( count( $supports_options ) === 0 ) {
 			return;
 		}
 
@@ -481,55 +476,154 @@ class Spruce {
 	 * Load and registers all passed navigation menus
 	 *
 	 * @since 1.0.0
-	 * 
+	 *
 	 * @see https://developer.wordpress.org/reference/functions/add_theme_support/
 	 *
 	 * @throws Exception If the supports config option isn't an array.
 	 *
 	 * @return void
 	 */
-	private function load_menus(){
+	private function load_menus() {
 		$menus_options = $this->get( 'menus' );
 
 		if ( 'array' !== gettype( $menus_options ) ) {
 			throw new Exception( 'menus in the spruce.config.php must be an array' );
 		}
 
-		if( count($menus_options) == 0){
+		if ( count( $menus_options ) === 0 ) {
 			return;
 		}
 
-		$menus = array_map(function($value){
-			return __($value, CHILD_THEME);
-		}, $menus_options);
-
-		register_nav_menus( $menus );
+		register_nav_menus( $menus_options );
 	}
 
 	/**
 	 * Load and registers all passed navigation menus
 	 *
 	 * @since 1.0.0
-	 * 
+	 *
 	 * @see https://developer.wordpress.org/reference/functions/register_sidebar/
 	 *
 	 * @throws Exception If the supports config option isn't an array.
 	 *
 	 * @return void
 	 */
-	private function load_sidebars(){
+	private function load_sidebars() {
 		$sidebars_options = $this->get( 'sidebars' );
 
 		if ( 'array' !== gettype( $sidebars_options ) ) {
 			throw new Exception( 'sidebars in the spruce.config.php must be an array' );
 		}
 
-		if( count($sidebars_options) == 0){
+		if ( count( $sidebars_options ) === 0 ) {
 			return;
-		}	
+		}
 
-		foreach($sidebars as $sidebar){
-			register_sidebar($sidebar);
+		foreach ( $sidebars_options as $sidebar ) {
+			register_sidebar( $sidebar );
+		}
+	}
+
+	/**
+	 * Load and registers customization
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string               $name The name of the customization.
+	 * @param WP_Customize_Manager $wp_customize the WP_Customize_Manager.
+	 *
+	 * @return void
+	 */
+	private function load_customization( $name, $wp_customize ) {
+		$path       = SPRUCE_INCLUDES_DIR . 'customizations/class-' . strtolower( $name ) . '.customization.php';
+		$class_name = $this->classify( $name . '_Customization' );
+
+		if ( true === file_exists( $path ) ) {
+			include_once $path;
+
+			$temp = new $class_name();
+			$temp->register( $wp_customize );
+		}
+	}
+	/**
+	 * Load and registers all customizations
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_Customize_Manager $wp_customize the WP_Customize_Manager.
+	 *
+	 * @return void
+	 */
+	private function load_customizations( $wp_customize ) {
+		$customizations_options = $this->get( 'customizations' );
+		$include                = self::INCLUDES['customizations'];
+
+		if ( 'array' === gettype( $customizations_options ) ) {
+
+			foreach ( $customizations_options  as $customization_option ) {
+				$this->load_customization( $customization_option, $wp_customize );
+			}
+		} elseif ( self::AUTOMATIC === $customizations_options ) {
+
+			$entries = $this->scan( SPRUCE_INCLUDES_DIR . 'customizations/' );
+
+			if ( false !== $entries ) {
+				foreach ( $entries as $entry ) {
+					if ( 1 === preg_match( $include['pattern'], $entry, $matches ) ) {
+						$this->load_customization( $matches[1], $wp_customize );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Display the vanity comment
+	 *
+	 * @since 1.0.0
+	 *
+	 * @throws Exception If the supports config option isn't an array.
+	 *
+	 * @return void
+	 */
+	private function load_vanity_comment() {
+		$vanity_option = $this->get( 'vanity' );
+
+		if ( 'boolean' !== gettype( $vanity_option ) ) {
+			throw new Exception( 'vanity in the spruce.config.php must be an boolean' );
+		}
+
+		if ( true === $vanity_option ) {
+			// phpcs:disable
+			?>
+<!-- 
+						  /                        
+						 (@                        
+						.@@*                       
+						@@@@                       
+					   &@(.@@                      
+					  @@#   @@                     
+					@@@      &@@                   
+				  &@@          @@@,                
+			  #@@@.               @@@#             
+		  @@@%.                      .%@@          
+			.@@(                   /@@@            
+			 /@@&@@@,         ,,@@(*@@@,           
+	   /&@@@@/          ,((            (@@@@/      
+	   ,@@#                              @@,       
+		  @@@#                       (@@@          
+		@@@@&  @@@               @@@    &@@@@      
+%@@@@%%               %%%%%%%.                %@@@%
+   #@@#.                                   .#@@%   
+	  ,%@@@#                           #@@@&,      
+			.*@@@@@@&&&&&&&&&&&@@@@@@@.            
+					 @&      @@                    
+					 @@@@@@@@@@     
+
+Powered By Spruce
+-->
+			<?php
+			// phpcs:enable
 		}
 	}
 
@@ -567,7 +661,6 @@ class Spruce {
 	 * @return array|boolean $entries returns false when the path doesn't exist
 	 */
 	private function scan( $path ) {
-
 		if ( false === file_exists( $path ) ) {
 			return false;
 		}
@@ -589,14 +682,38 @@ class Spruce {
 	}
 
 	/**
+	 * Customize_register hook.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_Customize_Manager $wp_customize the WP_Customize_Manager.
+	 *
+	 * @return void
+	 */
+	public function customize_register( $wp_customize ) {
+		$this->load_customizations( $wp_customize );
+	}
+
+	/**
+	 * Wp_head hook.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function wp_head() {
+		$this->load_vanity_comment();
+	}
+
+	/**
 	 * Widgets_init hook.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	public function widgets_init(){
-		
+	public function widgets_init() {
+		$this->load_sidebars();
 	}
 
 	/**
@@ -607,8 +724,6 @@ class Spruce {
 	 * @return void
 	 */
 	public function after_setup_theme() {
-		$this->custom_configuration_loaded = $this->load_configuration();
-
 		$this->load_supports();
 		$this->load_menus();
 	}

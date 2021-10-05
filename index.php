@@ -22,7 +22,7 @@
  * 
  *      Components
  *          Template Parts Checking [Done]
- *          JavaScript & Compiler
+ *          JavaScript & Compiler [Done]
  *          Styles [Done]
  *  
  *      Block Style Loader [Done]
@@ -33,14 +33,14 @@
  *  Includes
  *      Post Types [Done]
  *      Taxonomies [Done]
- *      Customizations []
- *      Field Groups Loader
- *      Bundles (actions and filters bundle together to finish a task ex. Disabling Comments)
+ *      Customizations [Done]
+ *      Bundles []
  * 
  *  Supports [Done]
  *  Menus [Done]
  *  Sidebars [Done]
  *
+ *  Field Groups Loader
  *  Options Page(s)
  *  
  * === Version 1.5 === 

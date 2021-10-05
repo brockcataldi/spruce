@@ -2,9 +2,9 @@
 /**
  * Plugin Name:  Spruce
  * Plugin URI:
- * Description:
+ * Description:  Modular Theme Building Framework
  * Author:       Brock Cataldi
- * Version:      1.0
+ * Version:      1.0.0
  * Text Domain:  spruce
  * Requires PHP: 7.4
  * License:
@@ -28,6 +28,7 @@ define( 'SPRUCE_INCLUDES_DIR', get_stylesheet_directory() . '/includes/' );
 define(
 	'SPRUCE_DEFAULT_CONFIGURATION',
 	array(
+		'vanity'     => false,
 		'blocks'     => array(
 			'acf'  => 'auto',
 			'core' => 'auto',
@@ -35,12 +36,25 @@ define(
 		'styles'     => array(),
 		'scripts'    => array(),
 		'supports'   => array(),
-		'menus'		 => array(),
-		'sidebars'	 => array(),
+		'menus'      => array(),
+		'sidebars'   => array(),
 		'post-types' => 'auto',
 		'taxonomies' => 'auto',
 	)
 );
+
+
+// Requiring the Base class for ACF Blocks.
+require_once SPRUCE_PLUGIN_DIR . 'class-spruce-block.php';
+
+// Requiring the abstrct class for Post Types.
+require_once SPRUCE_PLUGIN_DIR . 'class-spruce-post-type.php';
+
+// Requiring the abstrct class for Taxonomies.
+require_once SPRUCE_PLUGIN_DIR . 'class-spruce-taxonomy.php';
+
+// Requiring the abstrct class for Customizations.
+require_once SPRUCE_PLUGIN_DIR . 'class-spruce-customization.php';
 
 // Including the Spruce Base Class.
 require_once SPRUCE_PLUGIN_DIR . 'class-spruce.php';
