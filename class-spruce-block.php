@@ -86,7 +86,7 @@ class Spruce_Block {
 				// phpcs:disable
 				wp_enqueue_style(
 					'block-acf-' . $key,
-					sprintf( '%s/build/acf/%s.css', get_stylesheet_directory_uri(), $key )
+					sprintf( '%s/blocks/acf/%s/%s.build.css', get_stylesheet_directory_uri(), $key, $key )
 				);
 				// phpcs:enable
 
@@ -95,7 +95,7 @@ class Spruce_Block {
 
 					wp_enqueue_script(
 						'block-acf-' . $key,
-						sprintf( '%s/build/acf/%s.js', get_stylesheet_directory_uri(), $key ),
+						sprintf( '%s/blocks/acf/%s/%s.build.js', get_stylesheet_directory_uri(), $key, $key ),
 						( array_key_exists( 'dependencies', $params ) ) ? $params['dependencies'] : array(),
 						( array_key_exists( 'version', $params ) ) ? $params['version'] : array(),
 						( array_key_exists( 'footer', $params ) ) ? $params['footer'] : true,

@@ -32,18 +32,28 @@ class Spruce {
 			'extension' => '.post-type.php',
 			'pattern'   => '/class-(.*)\.post-type\.php/',
 			'static'    => true,
+			'register'	=> true,
 		),
 		'taxonomies' => array(
 			'suffix'    => '_Taxonomy',
 			'pattern'   => '/class-(.*)\.taxonomy\.php/',
 			'extension' => '.taxonomy.php',
 			'static'    => true,
+			'register'	=> true,
 		),
 		'bundles'    => array(
 			'suffix'    => '_Bundle',
 			'pattern'   => '/class-(.*)\.bundle\.php/',
 			'extension' => '.bundle.php',
 			'static'    => false,
+			'register'	=> true,
+		),
+		'walkers'    => array(
+			'suffix'    => '_Walker',
+			'pattern'   => '/class-(.*)\.walker\.php/',
+			'extension' => '.walker.php',
+			'static'    => false,
+			'register'	=> false,
 		),
 	);
 
@@ -367,7 +377,7 @@ class Spruce {
 			// phpcs:disable
 			wp_enqueue_style(
 				sprintf( '%s-%s', $prefix, $block ),
-				sprintf( '%s/build/%s/%s.css', get_stylesheet_directory_uri(), $prefix, $block ),
+				sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory_uri(), $prefix, $block, $block),
 				array(),
 				null,
 				'all'
@@ -426,11 +436,13 @@ class Spruce {
 		if ( true === file_exists( $path ) ) {
 			include_once $path;
 
-			if ( true === $include['static'] ) {
-				$class_name::register();
-			} else {
-				$temp = new $class_name();
-				$temp->register();
+			if( true == $include['register'] ){
+				if ( true === $include['static'] ) {
+					$class_name::register();
+				} else {
+					$temp = new $class_name();
+					$temp->register();
+				}
 			}
 		}
 	}
@@ -726,6 +738,7 @@ Powered By Spruce
 		$this->load_supports();
 		$this->load_menus();
 		$this->load_includes( 'bundles' );
+		$this->load_includes( 'walkers' );
 	}
 
 	/**

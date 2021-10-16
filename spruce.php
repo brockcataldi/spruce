@@ -42,6 +42,7 @@ define(
 		'taxonomies'     => 'auto',
 		'customizations' => 'auto',
 		'bundles'        => 'auto',
+		'walkers'        => 'auto',
 	)
 );
 
