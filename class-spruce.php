@@ -312,7 +312,7 @@ class Spruce {
 				if ( true === array_key_exists( 'file', $script ) ) {
 					wp_enqueue_script(
 						$script['name'],
-						sprintf( '%s/%s', get_stylesheet_directory_uri(), $style['file'] ),
+						sprintf( '%s/%s', get_stylesheet_directory_uri(), $script['file'] ),
 						( false === array_key_exists( 'dependencies', $script ) ) ? array() : $script['dependencies'],
 						( false === array_key_exists( 'version', $script ) ) ? null : $script['version'],
 						( false === array_key_exists( 'footer', $script ) ) ? false : $script['footer']
