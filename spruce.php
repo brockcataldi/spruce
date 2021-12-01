@@ -65,6 +65,9 @@ require_once SPRUCE_PLUGIN_DIR . 'class-spruce-bundle.php';
 // Including the Spruce Base Class.
 require_once SPRUCE_PLUGIN_DIR . 'class-spruce.php';
 
+// Including Various Utility Functions.
+require_once SPRUCE_PLUGIN_DIR . 'spruce-functions.php';
+
 // Initial Creation Hook.
 add_action( 'plugins_loaded', array( 'Spruce', 'plugins_loaded' ) );
 

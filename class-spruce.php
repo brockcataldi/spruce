@@ -73,6 +73,9 @@ class Spruce {
 	 */
 	public function __construct() {
 		$this->custom_configuration_loaded = $this->load_configuration();
+
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
@@ -387,6 +390,58 @@ class Spruce {
 	}
 
 	/**
+	 * Loading core block stylesheets for the edtior side, will be adapted for other block providers eventually.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	private function load_editor_blocks_styles(){
+		$prefix               = 'core';
+		$block_loading_option = $this->get( array( 'blocks', $prefix ) );
+
+		if ( 'array' === gettype( $block_loading_option ) ) {
+
+			foreach ( $block_loading_option as $block ) {
+				$this->load_editor_block_styles( $prefix, $block );
+			}
+		} elseif ( self::AUTOMATIC === $block_loading_option ) {
+
+			$entries = $this->scan( get_stylesheet_directory() . '/blocks/' . $prefix );
+
+			if ( false !== $entries ) {
+				foreach ( $entries as $entry ) {
+					if ( false === strpos( $entry, '.' ) ) {
+						$this->load_editor_block_styles( $prefix, $entry );
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Loading core block stylesheets, will be adapted for other block providers eventually.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $prefix the block prefix.
+	 * @param string $block the block name.
+	 *
+	 * @return void
+	 */
+	private function load_editor_block_styles( $prefix, $block ) {
+		// phpcs:disable
+		wp_enqueue_style(
+			sprintf( '%s-%s', $prefix, $block ),
+			sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory_uri(), $prefix, $block, $block),
+			array(),
+			null,
+			'all'
+		);
+		// phpcs:enable
+	}
+
+	/**
 	 * Load all of the includes based on slug.
 	 *
 	 * @since 1.0.0
@@ -678,6 +733,28 @@ Powered By Spruce
 
 		$scan = scandir( $path );
 		return ( false === $scan ) ? false : array_diff( $scan, array( '..', '.' ) );
+	}
+
+	/**
+	 * Admin_init hook.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */	
+	public function admin_init(){
+		add_editor_style('editor-style.css');
+	}
+
+	/**
+	 * Enqueue_block_editor_assets hook.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */	
+	public function enqueue_block_editor_assets(){
+		$this->load_editor_blocks_styles();
 	}
 
 	/**
