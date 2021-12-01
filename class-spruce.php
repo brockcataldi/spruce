@@ -32,28 +32,28 @@ class Spruce {
 			'extension' => '.post-type.php',
 			'pattern'   => '/class-(.*)\.post-type\.php/',
 			'static'    => true,
-			'register'	=> true,
+			'register'  => true,
 		),
 		'taxonomies' => array(
 			'suffix'    => '_Taxonomy',
 			'pattern'   => '/class-(.*)\.taxonomy\.php/',
 			'extension' => '.taxonomy.php',
 			'static'    => true,
-			'register'	=> true,
+			'register'  => true,
 		),
 		'bundles'    => array(
 			'suffix'    => '_Bundle',
 			'pattern'   => '/class-(.*)\.bundle\.php/',
 			'extension' => '.bundle.php',
 			'static'    => false,
-			'register'	=> true,
+			'register'  => true,
 		),
 		'walkers'    => array(
 			'suffix'    => '_Walker',
 			'pattern'   => '/class-(.*)\.walker\.php/',
 			'extension' => '.walker.php',
 			'static'    => false,
-			'register'	=> false,
+			'register'  => false,
 		),
 	);
 
@@ -396,7 +396,7 @@ class Spruce {
 	 *
 	 * @return void
 	 */
-	private function load_editor_blocks_styles(){
+	private function load_editor_blocks_styles() {
 		$prefix               = 'core';
 		$block_loading_option = $this->get( array( 'blocks', $prefix ) );
 
@@ -491,7 +491,7 @@ class Spruce {
 		if ( true === file_exists( $path ) ) {
 			include_once $path;
 
-			if( true == $include['register'] ){
+			if ( true === $include['register'] ) {
 				if ( true === $include['static'] ) {
 					$class_name::register();
 				} else {
@@ -741,9 +741,9 @@ Powered By Spruce
 	 * @since 1.0.0
 	 *
 	 * @return void
-	 */	
-	public function admin_init(){
-		add_editor_style('editor-style.css');
+	 */
+	public function admin_init() {
+		add_editor_style( 'editor-style.css' );
 	}
 
 	/**
@@ -752,8 +752,8 @@ Powered By Spruce
 	 * @since 1.0.0
 	 *
 	 * @return void
-	 */	
-	public function enqueue_block_editor_assets(){
+	 */
+	public function enqueue_block_editor_assets() {
 		$this->load_editor_blocks_styles();
 	}
 
