@@ -58,7 +58,7 @@ function is_editor() {
  */
 function href( string $url, bool $echo = true ) {
 
-	$string = ( is_editor() ) ? '' : sprintf( 'href="%s"', $link );
+	$string = ( is_editor() ) ? '' : sprintf( 'href="%s"', $url );
 
 	if ( true === $echo ) {
 		// phpcs:disable
