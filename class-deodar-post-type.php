@@ -1,24 +1,24 @@
 <?php
 /**
- * Spruce Post Type Class
+ * Deodar Post Type Class
  *
  * Used as a basic class to register post types.
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage PostType
  * @since 1.0.0
  */
 
 /**
- * Spruce Post Type Class
+ * Deodar Post Type Class
  *
  * Used as a basic class to register post types.
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage PostType
  * @since 1.0.0
  */
-abstract class Spruce_Post_Type {
+abstract class Deodar_Post_Type {
 
 	/**
 	 * Post type slug.

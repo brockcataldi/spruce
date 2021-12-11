@@ -1,22 +1,22 @@
 <?php
 /**
- * Spruce Class
+ * Deodar Class
  *
- * Used to be the bridge between spruce operations and the WordPress hooks and filters.
+ * Used to be the bridge between deodar operations and the WordPress hooks and filters.
  *
- * @package Spruce
- * @subpackage Spruce
+ * @package Deodar
+ * @subpackage Deodar
  * @since 1.0.0
  */
 
 /**
- * Spruce Class
+ * Deodar Class
  *
- * Used to be the bridge between spruce operations and the WordPress hooks and filters.
+ * Used to be the bridge between deodar operations and the WordPress hooks and filters.
  *
  * @since 1.0.0
  */
-class Spruce {
+class Deodar {
 
 	/**
 	 * A string value in the config file for Automatic.
@@ -65,7 +65,7 @@ class Spruce {
 	public bool $custom_configuration_loaded = false;
 
 	/**
-	 * Spruce Constructor
+	 * Deodar Constructor
 	 *
 	 * Binding the init hook
 	 *
@@ -116,13 +116,13 @@ class Spruce {
 	private function get_string( $key, $custom = false ) {
 
 		if ( true === $custom ) {
-			if ( true === array_key_exists( $key, SPRUCE_CONFIGURATION ) ) {
-				return SPRUCE_CONFIGURATION[ $key ];
+			if ( true === array_key_exists( $key, DEODAR_CONFIGURATION ) ) {
+				return DEODAR_CONFIGURATION[ $key ];
 			}
 		}
 
-		if ( true === array_key_exists( $key, SPRUCE_DEFAULT_CONFIGURATION ) ) {
-			return SPRUCE_DEFAULT_CONFIGURATION[ $key ];
+		if ( true === array_key_exists( $key, DEODAR_DEFAULT_CONFIGURATION ) ) {
+			return DEODAR_DEFAULT_CONFIGURATION[ $key ];
 		}
 
 		return null;
@@ -140,14 +140,14 @@ class Spruce {
 	private function get_array( $key, $custom = false ) {
 
 		if ( true === $custom ) {
-			$result = $this->search_array( $key, SPRUCE_CONFIGURATION );
+			$result = $this->search_array( $key, DEODAR_CONFIGURATION );
 
 			if ( false === is_null( $result ) ) {
 				return $result;
 			}
 		}
 
-		$result = $this->search_array( $key, SPRUCE_DEFAULT_CONFIGURATION );
+		$result = $this->search_array( $key, DEODAR_DEFAULT_CONFIGURATION );
 
 		if ( false === is_null( $result ) ) {
 			return $result;
@@ -179,15 +179,15 @@ class Spruce {
 	}
 
 	/**
-	 * Load the spruce.config.php file from the child theme
+	 * Load the deodar.config.php file from the child theme
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return bool whether or not the file was loaded successfully
 	 */
 	public function load_configuration() {
-		if ( true === $this->load_file( get_stylesheet_directory() . '/spruce.config.php' ) ) {
-			return defined( 'SPRUCE_CONFIGURATION' );
+		if ( true === $this->load_file( get_stylesheet_directory() . '/deodar.config.php' ) ) {
+			return defined( 'DEODAR_CONFIGURATION' );
 		}
 		return false;
 	}
@@ -461,7 +461,7 @@ class Spruce {
 			}
 		} elseif ( self::AUTOMATIC === $loading_options ) {
 
-			$entries = $this->scan( SPRUCE_INCLUDES_DIR . $type . '/' );
+			$entries = $this->scan( DEODAR_INCLUDES_DIR . $type . '/' );
 
 			if ( false !== $entries ) {
 				foreach ( $entries as $entry ) {
@@ -485,7 +485,7 @@ class Spruce {
 	 * @return void
 	 */
 	private function load_include( $name, $type, $include ) {
-		$path       = SPRUCE_INCLUDES_DIR . $type . '/class-' . strtolower( $name ) . $include['extension'];
+		$path       = DEODAR_INCLUDES_DIR . $type . '/class-' . strtolower( $name ) . $include['extension'];
 		$class_name = $this->classify( $name . $include['suffix'] );
 
 		if ( true === file_exists( $path ) ) {
@@ -517,7 +517,7 @@ class Spruce {
 		$supports_options = $this->get( 'supports' );
 
 		if ( 'array' !== gettype( $supports_options ) ) {
-			throw new Exception( 'supports in the spruce.config.php must be an array' );
+			throw new Exception( 'supports in the deodar.config.php must be an array' );
 		}
 
 		if ( count( $supports_options ) === 0 ) {
@@ -554,7 +554,7 @@ class Spruce {
 		$menus_options = $this->get( 'menus' );
 
 		if ( 'array' !== gettype( $menus_options ) ) {
-			throw new Exception( 'menus in the spruce.config.php must be an array' );
+			throw new Exception( 'menus in the deodar.config.php must be an array' );
 		}
 
 		if ( count( $menus_options ) === 0 ) {
@@ -579,7 +579,7 @@ class Spruce {
 		$sidebars_options = $this->get( 'sidebars' );
 
 		if ( 'array' !== gettype( $sidebars_options ) ) {
-			throw new Exception( 'sidebars in the spruce.config.php must be an array' );
+			throw new Exception( 'sidebars in the deodar.config.php must be an array' );
 		}
 
 		if ( count( $sidebars_options ) === 0 ) {
@@ -602,7 +602,7 @@ class Spruce {
 	 * @return void
 	 */
 	private function load_customization( $name, $wp_customize ) {
-		$path       = SPRUCE_INCLUDES_DIR . 'customizations/class-' . strtolower( $name ) . '.customization.php';
+		$path       = DEODAR_INCLUDES_DIR . 'customizations/class-' . strtolower( $name ) . '.customization.php';
 		$class_name = $this->classify( $name . '_Customization' );
 
 		if ( true === file_exists( $path ) ) {
@@ -631,7 +631,7 @@ class Spruce {
 			}
 		} elseif ( self::AUTOMATIC === $customizations_options ) {
 
-			$entries = $this->scan( SPRUCE_INCLUDES_DIR . 'customizations/' );
+			$entries = $this->scan( DEODAR_INCLUDES_DIR . 'customizations/' );
 
 			if ( false !== $entries ) {
 				foreach ( $entries as $entry ) {
@@ -656,7 +656,7 @@ class Spruce {
 		$vanity_option = $this->get( 'vanity' );
 
 		if ( 'boolean' !== gettype( $vanity_option ) ) {
-			throw new Exception( 'vanity in the spruce.config.php must be an boolean' );
+			throw new Exception( 'vanity in the deodar.config.php must be an boolean' );
 		}
 
 		if ( true === $vanity_option ) {
@@ -686,7 +686,7 @@ class Spruce {
 					 @&      @@                    
 					 @@@@@@@@@@     
 
-Powered By Spruce
+Powered By Deodar
 -->
 			<?php
 			// phpcs:enable
@@ -871,19 +871,19 @@ Powered By Spruce
 	/**
 	 * Plugins_loaded hook
 	 *
-	 * Meant to ensure the spruce global object is created.
+	 * Meant to ensure the deodar global object is created.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @global Spruce $spruce Spruce Global Object.
+	 * @global Deodar $deodar Deodar Global Object.
 	 *
 	 * @return void
 	 */
 	public static function plugins_loaded() {
-		global $spruce;
+		global $deodar;
 
-		if ( ! array_key_exists( 'spruce', $GLOBALS ) || ! is_a( $GLOBALS['spruce'], 'Spruce' ) ) {
-				$spruce = new Spruce();
+		if ( ! array_key_exists( 'deodar', $GLOBALS ) || ! is_a( $GLOBALS['deodar'], 'Deodar' ) ) {
+				$deodar = new Deodar();
 		}
 	}
 }

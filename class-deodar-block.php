@@ -1,24 +1,24 @@
 <?php
 /**
- * Spruce Block Class
+ * Deodar Block Class
  *
  * Used as a base static class to create ACF blocks simply and effectively.
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage Block
  * @since 1.0.0
  */
 
 /**
- * Spruce Block Class
+ * Deodar Block Class
  *
  * Used as a base static class to create ACF blocks simply and effectively.
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage Block
  * @since 1.0.0
  */
-class Spruce_Block {
+class Deodar_Block {
 
 	/**
 	 * Required unique key, creating the field group and block.
@@ -46,7 +46,7 @@ class Spruce_Block {
 	public static array $fields = array();
 
 	/**
-	 * Spruce Parameters to create the block. Mainly used for enqueue the javascript files.
+	 * Deodar Parameters to create the block. Mainly used for enqueue the javascript files.
 	 *
 	 * @var array $params
 	 */

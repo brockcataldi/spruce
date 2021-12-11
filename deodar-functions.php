@@ -1,11 +1,11 @@
 <?php
 /**
- * Spruce Utility functions
+ * Deodar Utility functions
  *
  * Used as helper functions for various tasks.
  *
- * @package Spruce
- * @subpackage Spruce
+ * @package Deodar
+ * @subpackage Functions
  * @since 1.0.0
  */
 

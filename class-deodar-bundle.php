@@ -1,26 +1,26 @@
 <?php
 /**
- * Spruce Bundle Class
+ * Deodar Bundle Class
  *
  * A series of hooks and filters to handle a goal, replaces certain plugins
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage Bundle
  *
  * @since 1.0
  */
 
 /**
- * Spruce Bundle Class
+ * Deodar Bundle Class
  *
  * A series of hooks and filters to handle a goal, replaces certain plugins
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage Bundle
  *
  * @since 1.0
  */
-abstract class Spruce_Bundle {
+abstract class Deodar_Bundle {
 
 	/**
 	 * Bundle Constructor

@@ -2,7 +2,7 @@
 /**
  *  Silence is golden.
  *
- *  @package Spruce
+ *  @package Deodar
  */
 
 // Silence is golden.

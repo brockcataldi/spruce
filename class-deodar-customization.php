@@ -1,24 +1,24 @@
 <?php
 /**
- * Spruce Customization class
+ * Deodar Customization class
  *
  * An abstract class to add customzier options
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage Customization
  * @since 1.0
  */
 
 /**
- * Spruce Customization class
+ * Deodar Customization class
  *
  * An abstract class to add customzier options
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage Customization
  * @since 1.0
  */
-abstract class Spruce_Customization {
+abstract class Deodar_Customization {
 	/**
 	 * Constructor
 	 *

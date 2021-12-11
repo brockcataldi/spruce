@@ -1,24 +1,24 @@
 <?php
 /**
- * Spruce Taxonomy Class
+ * Deodar Taxonomy Class
  *
  * Used as a basic class to register taxonomies.
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage Taxonomy
  * @since 1.0.0
  */
 
 /**
- * Spruce Taxonomy Class
+ * Deodar Taxonomy Class
  *
  * Used as a basic class to register taxonomies.
  *
- * @package Spruce
+ * @package Deodar
  * @subpackage Taxonomy
  * @since 1.0.0
  */
-abstract class Spruce_Taxonomy {
+abstract class Deodar_Taxonomy {
 
 	/**
 	 * Taxonomy Slug.
