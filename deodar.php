@@ -28,7 +28,6 @@ define( 'DEODAR_INCLUDES_DIR', get_stylesheet_directory() . '/includes/' );
 define(
 	'DEODAR_DEFAULT_CONFIGURATION',
 	array(
-		'vanity'         => false,
 		'blocks'         => array(
 			'acf'  => 'auto',
 			'core' => 'auto',
@@ -46,27 +45,33 @@ define(
 	)
 );
 
+// Including Various Utility Functions.
+require_once DEODAR_PLUGIN_DIR . 'deodar-functions.php';
 
 // Requiring the Base class for ACF Blocks.
-require_once DEODAR_PLUGIN_DIR . 'class-deodar-block.php';
-
-// Requiring the abstract class for Post Types.
-require_once DEODAR_PLUGIN_DIR . 'class-deodar-post-type.php';
-
-// Requiring the abstract class for Taxonomies.
-require_once DEODAR_PLUGIN_DIR . 'class-deodar-taxonomy.php';
-
-// Requiring the abstract class for Customizations.
-require_once DEODAR_PLUGIN_DIR . 'class-deodar-customization.php';
+require_once DEODAR_PLUGIN_DIR . 'models/class-deodar-block.php';
 
 // Requiring the abstrct class for Bundles.
-require_once DEODAR_PLUGIN_DIR . 'class-deodar-bundle.php';
+require_once DEODAR_PLUGIN_DIR . 'models/class-deodar-bundle.php';
+
+// Requiring the abstract class for Customizations.
+require_once DEODAR_PLUGIN_DIR . 'models/class-deodar-customization.php';
+
+// Requiring the abstract class for Post Types.
+require_once DEODAR_PLUGIN_DIR . 'models/class-deodar-post-type.php';
+
+// Requiring the abstract class for Taxonomies.
+require_once DEODAR_PLUGIN_DIR . 'models/class-deodar-taxonomy.php';
+
+//
+//
+//
+
+// Including the Deodar Configuration Class.
+require_once DEODAR_PLUGIN_DIR . 'class-deodar-configuration.php';
 
 // Including the Deodar Base Class.
 require_once DEODAR_PLUGIN_DIR . 'class-deodar.php';
-
-// Including Various Utility Functions.
-require_once DEODAR_PLUGIN_DIR . 'deodar-functions.php';
 
 // Initial Creation Hook.
 add_action( 'plugins_loaded', array( 'Deodar', 'plugins_loaded' ) );

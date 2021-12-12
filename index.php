@@ -38,19 +38,20 @@
  *  Supports [Done]
  *  Menus [Done]
  *  Sidebars [Done]
- *
- * === Version 1.1 ===
- *  Field Groups Loader
- *  Options Page(s)
  * 
- * === Version 1.2 === 
- *  Utility Functions
+ *  Refactor the plugin code make it more class based. []
+ *  Add alternative plugin based styling for blocks (gravity forms, jetpack, etc). []
+ *  Minimize the phpcs:disables []
+ *  Field Groups Loader []
+ *  Options Page(s) []
+ *  Utility Functions [Done]
+ *  Defer Stylesheets []
+ *  Defer jQuery
+ *  Defer JavaScripts
  *  
- * === Version 1.3 === 
+ * === Version 2 === 
+ *  Mutliple Spruce Directives (Plugins)
  *  Image and Image Sizes
- * 
- * === Version 2 ===
- *  Externalization Plugin
  * 
  * === Version 3 ===
  *  CLI Tool
