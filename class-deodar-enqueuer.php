@@ -45,6 +45,31 @@ class Deodar_Enqueuer {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @param string $prefix the block prefix.
+	 * @param string $block the block name.
+	 * @param bool   $editor if enqueued for the editor.
+	 *
+	 * @return void
+	 */
+	private function enqueue_block_styles( string $prefix, string $block, bool $editor = false ) {
+		if ( true === $editor || true === has_block( sprintf( '%s/%s', $prefix, $block ) ) ) {
+			// phpcs:disable
+			wp_enqueue_style(
+				sprintf( '%s-%s', $prefix, $block ),
+				sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory_uri(), $prefix, $block, $block),
+				array(),
+				null,
+				'all'
+			);
+			// phpcs:enable
+		}
+	}
+
+	/**
+	 * Loading core block stylesheets, will be adapted for other block providers eventually.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @param bool $editor if enqueued for the editor.
 	 *
 	 * @return void
@@ -69,31 +94,6 @@ class Deodar_Enqueuer {
 					}
 				}
 			}
-		}
-	}
-
-	/**
-	 * Loading core block stylesheets, will be adapted for other block providers eventually.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $prefix the block prefix.
-	 * @param string $block the block name.
-	 * @param bool   $editor if enqueued for the editor.
-	 *
-	 * @return void
-	 */
-	private function enqueue_block_styles( string $prefix, string $block, bool $editor = false ) {
-		if ( true === $editor || true === has_block( sprintf( '%s/%s', $prefix, $block ) ) ) {
-			// phpcs:disable
-			wp_enqueue_style(
-				sprintf( '%s-%s', $prefix, $block ),
-				sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory_uri(), $prefix, $block, $block),
-				array(),
-				null,
-				'all'
-			);
-			// phpcs:enable
 		}
 	}
 
@@ -169,5 +169,4 @@ class Deodar_Enqueuer {
 			}
 		}
 	}
-
 }

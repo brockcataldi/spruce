@@ -67,8 +67,17 @@ require_once DEODAR_PLUGIN_DIR . 'deodar-functions.php';
 // Including the Deodar Configuration Class.
 require_once DEODAR_PLUGIN_DIR . 'class-deodar-configuration.php';
 
+// Including the Deodar ACF Class.
+require_once DEODAR_PLUGIN_DIR . 'class-deodar-acf.php';
+
 // Including the Deodar Enqueuer Class.
 require_once DEODAR_PLUGIN_DIR . 'class-deodar-enqueuer.php';
+
+// Including the Deodar Includer Class.
+require_once DEODAR_PLUGIN_DIR . 'class-deodar-includer.php';
+
+// Including the Deodar Theme Class.
+require_once DEODAR_PLUGIN_DIR . 'class-deodar-theme.php';
 
 // Including the Deodar Base Class.
 require_once DEODAR_PLUGIN_DIR . 'class-deodar.php';

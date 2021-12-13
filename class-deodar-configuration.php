@@ -40,20 +40,6 @@ class Deodar_Configuration {
 	}
 
 	/**
-	 * Load the deodar.config.php file from the child theme
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return bool whether or not the file was loaded successfully
-	 */
-	public function load_configuration() {
-		if ( true === include_file( get_stylesheet_directory() . '/deodar.config.php' ) ) {
-			return defined( 'DEODAR_CONFIGURATION' );
-		}
-		return false;
-	}
-
-	/**
 	 * Get the configuration value from either the default or custom config file
 	 *
 	 * @since 1.0.0
@@ -128,5 +114,19 @@ class Deodar_Configuration {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Load the deodar.config.php file from the child theme
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool whether or not the file was loaded successfully
+	 */
+	public function load_configuration() {
+		if ( true === include_file( get_stylesheet_directory() . '/deodar.config.php' ) ) {
+			return defined( 'DEODAR_CONFIGURATION' );
+		}
+		return false;
 	}
 }

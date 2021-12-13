@@ -10,6 +10,87 @@
  */
 
 /**
+ * Determining classes based on conditionals
+ *
+ * @param array $classes the classes and the conditionals.
+ * @param bool  $echo whether or not to echo or return.
+ *
+ * @return void|string the class list
+ */
+function classes( array $classes = array(), bool $echo = true ) {
+	$valid = array();
+
+	foreach ( $classes as $classname => $conditional ) {
+
+		if ( true === $conditional ) {
+			$valid[] = $classname;
+		}
+	}
+
+	if ( true === $echo ) {
+		echo esc_html( implode( ' ', $valid ) );
+	} else {
+		return esc_html( $valid );
+	}
+}
+
+/**
+ * This uppercases each word and makes the separator an underscore.
+ *
+ * @since 1.0.0
+ *
+ * @param string $string the word to be classified.
+ *
+ * @return string the classified name
+ */
+function classify( $string ) {
+	return implode(
+		'_',
+		array_map(
+			function( $word ) {
+				return ucfirst( $word );
+			},
+			explode(
+				'_',
+				str_replace( '-', '_', $string )
+			)
+		)
+	);
+}
+
+/**
+ * Load specified file via the $path
+ *
+ * @since 1.0.0
+ *
+ * @param string $path the file path.
+ *
+ * @return bool whether or not the file was loaded successfully
+ */
+function include_file( $path ) {
+
+	if ( true === file_exists( $path ) ) {
+		include_once $path;
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Determining if the current screen is an editor screen,
+ * this is really just a wrapper for is_admin() currently.
+ *
+ * @see https://developer.wordpress.org/reference/functions/is_admin/
+ *
+ * @return bool whether or not the screen is an admin screen
+ */
+function is_editor() {
+	return is_admin();
+}
+
+
+/**
  * Scans directory based on path, removes the linux entries for up a directory and a current directory.
  *
  * @since 1.0.0
@@ -50,62 +131,6 @@ function search_array( $key, $array ) {
 }
 
 /**
- * Load specified file via the $path
- *
- * @since 1.0.0
- *
- * @param string $path the file path.
- *
- * @return bool whether or not the file was loaded successfully
- */
-function include_file( $path ) {
-
-	if ( true === file_exists( $path ) ) {
-		include_once $path;
-		return true;
-	}
-
-	return false;
-}
-
-/**
- * Determining classes based on conditionals
- *
- * @param array $classes the classes and the conditionals.
- * @param bool  $echo whether or not to echo or return.
- *
- * @return void|string the class list
- */
-function classes( array $classes = array(), bool $echo = true ) {
-	$valid = array();
-
-	foreach ( $classes as $classname => $conditional ) {
-
-		if ( true === $conditional ) {
-			$valid[] = $classname;
-		}
-	}
-
-	if ( true === $echo ) {
-		echo esc_html( implode( ' ', $valid ) );
-	} else {
-		return esc_html( $valid );
-	}
-}
-
-/**
- * Determining if the current screen is an editor screen,
- * this is really just a wrapper for is_admin() currently.
- *
- * @see https://developer.wordpress.org/reference/functions/is_admin/
- *
- * @return bool whether or not the screen is an admin screen
- */
-function is_editor() {
-	return is_admin();
-}
-
-/**
  * Echoing or Returning either an href with link or an empty string.
  * The whole point of this is to echo out an href, so that's why there are
  * phpcs:disables
@@ -130,26 +155,3 @@ function href( string $url, bool $echo = true ) {
 	}
 }
 
-/**
- * This uppercases each word and makes the separator an underscore.
- *
- * @since 1.0.0
- *
- * @param string $string the word to be classified.
- *
- * @return string the classified name
- */
-function classify( $string ) {
-	return implode(
-		'_',
-		array_map(
-			function( $word ) {
-				return ucfirst( $word );
-			},
-			explode(
-				'_',
-				str_replace( '-', '_', $string )
-			)
-		)
-	);
-}
