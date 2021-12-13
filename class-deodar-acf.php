@@ -18,7 +18,7 @@
  */
 class Deodar_ACF {
 	/**
-	 * Constructor for the Enqueuer.
+	 * Constructor for the ACF Class.
 	 *
 	 * @var Deodar_Configuration $configuration the system configuration.
 	 *

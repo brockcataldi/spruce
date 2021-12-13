@@ -10,7 +10,7 @@
  */
 
 /**
- * Deodar Enqueuer Class
+ * Deodar Theme Class
  *
  * Handling theme modifications, via supports, menus and sidebars.
  *
@@ -19,7 +19,7 @@
 class Deodar_Theme {
 
 	/**
-	 * Constructor for the Enqueuer.
+	 * Constructor for the Theme.
 	 *
 	 * @var Deodar_Configuration $configuration the system configuration.
 	 *

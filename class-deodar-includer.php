@@ -60,7 +60,7 @@ class Deodar_Includer {
 	);
 
 	/**
-	 * Constructor for the Enqueuer.
+	 * Constructor for the Theme.
 	 *
 	 * @var Deodar_Configuration $configuration the system configuration.
 	 *
