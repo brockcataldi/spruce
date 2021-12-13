@@ -58,11 +58,18 @@ class Deodar {
 	);
 
 	/**
-	 * Configuration Manager.
+	 * Configuration Manager for default and custom configurations.
 	 *
 	 * @var Deodar_Configuration $configuration
 	 */
 	public Deodar_Configuration $configuration;
+
+	/**
+	 * Enqueuer for Scripts and Styles.
+	 *
+	 * @var Deodar_Enqueuer $enqueuer
+	 */
+	public Deodar_Enqueuer $enqueuer;
 
 	/**
 	 * Deodar Constructor
@@ -74,6 +81,7 @@ class Deodar {
 	public function __construct() {
 
 		$this->configuration = new Deodar_Configuration();
+		$this->enqueuer      = new Deodar_Enqueuer( $this->configuration );
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
@@ -133,187 +141,6 @@ class Deodar {
 		if ( true === $loaded ) {
 			call_user_func( classify( $block ) . '_Block::register' );
 		}
-	}
-
-	/**
-	 * Loading stylesheets passed into the styles config
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	private function load_styles() {
-		$styles = $this->configuration->get( 'styles' );
-
-		if ( false === $styles ) {
-			return;
-		}
-
-		foreach ( $styles as $style ) {
-			if ( true === array_key_exists( 'name', $style ) ) {
-				if ( true === array_key_exists( 'file', $style ) ) {
-					wp_enqueue_style(
-						$style['name'],
-						sprintf( '%s/%s', get_stylesheet_directory_uri(), $style['file'] ),
-						( false === array_key_exists( 'dependencies', $style ) ) ? array() : $style['dependencies'],
-						( false === array_key_exists( 'version', $style ) ) ? null : $style['version'],
-						( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
-					);
-				} elseif ( true === array_key_exists( 'uri', $style ) ) {
-					wp_enqueue_style(
-						$style['name'],
-						$style['uri'],
-						( false === array_key_exists( 'dependencies', $style ) ) ? array() : $style['dependencies'],
-						( false === array_key_exists( 'version', $style ) ) ? null : $style['version'],
-						( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
-					);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Loading javascripts passed into the scripts config
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	private function load_scripts() {
-		$scripts = $this->configuration->get( 'scripts' );
-
-		if ( false === $scripts ) {
-			return;
-		}
-		foreach ( $scripts as $script ) {
-			if ( true === array_key_exists( 'name', $script ) ) {
-				if ( true === array_key_exists( 'file', $script ) ) {
-					wp_enqueue_script(
-						$script['name'],
-						sprintf( '%s/%s', get_stylesheet_directory_uri(), $script['file'] ),
-						( false === array_key_exists( 'dependencies', $script ) ) ? array() : $script['dependencies'],
-						( false === array_key_exists( 'version', $script ) ) ? null : $script['version'],
-						( false === array_key_exists( 'footer', $script ) ) ? false : $script['footer']
-					);
-				} elseif ( true === array_key_exists( 'uri', $script ) ) {
-					wp_enqueue_script(
-						$script['name'],
-						$script['uri'],
-						( false === array_key_exists( 'dependencies', $script ) ) ? array() : $script['dependencies'],
-						( false === array_key_exists( 'version', $script ) ) ? null : $script['version'],
-						( false === array_key_exists( 'footer', $script ) ) ? false : $script['footer']
-					);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Loading core block stylesheets, will be adapted for other block providers eventually.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	private function load_blocks_styles() {
-
-		$prefix               = 'core';
-		$block_loading_option = $this->configuration->get( array( 'blocks', $prefix ) );
-
-		if ( 'array' === gettype( $block_loading_option ) ) {
-
-			foreach ( $block_loading_option as $block ) {
-				$this->load_block_styles( $prefix, $block );
-			}
-		} elseif ( self::AUTOMATIC === $block_loading_option ) {
-
-			$entries = scan( get_stylesheet_directory() . '/blocks/' . $prefix );
-
-			if ( false !== $entries ) {
-				foreach ( $entries as $entry ) {
-					if ( false === strpos( $entry, '.' ) ) {
-						$this->load_block_styles( $prefix, $entry );
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Loading core block stylesheets, will be adapted for other block providers eventually.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $prefix the block prefix.
-	 * @param string $block the block name.
-	 *
-	 * @return void
-	 */
-	private function load_block_styles( $prefix, $block ) {
-		if ( true === has_block( sprintf( '%s/%s', $prefix, $block ) ) ) {
-
-			// phpcs:disable
-			wp_enqueue_style(
-				sprintf( '%s-%s', $prefix, $block ),
-				sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory_uri(), $prefix, $block, $block),
-				array(),
-				null,
-				'all'
-			);
-			// phpcs:enable
-		}
-	}
-
-	/**
-	 * Loading core block stylesheets for the edtior side, will be adapted for other block providers eventually.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	private function load_editor_blocks_styles() {
-		$prefix               = 'core';
-		$block_loading_option = $this->configuration->get( array( 'blocks', $prefix ) );
-
-		if ( 'array' === gettype( $block_loading_option ) ) {
-
-			foreach ( $block_loading_option as $block ) {
-				$this->load_editor_block_styles( $prefix, $block );
-			}
-		} elseif ( self::AUTOMATIC === $block_loading_option ) {
-
-			$entries = scan( get_stylesheet_directory() . '/blocks/' . $prefix );
-
-			if ( false !== $entries ) {
-				foreach ( $entries as $entry ) {
-					if ( false === strpos( $entry, '.' ) ) {
-						$this->load_editor_block_styles( $prefix, $entry );
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Loading core block stylesheets, will be adapted for other block providers eventually.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $prefix the block prefix.
-	 * @param string $block the block name.
-	 *
-	 * @return void
-	 */
-	private function load_editor_block_styles( $prefix, $block ) {
-		// phpcs:disable
-		wp_enqueue_style(
-			sprintf( '%s-%s', $prefix, $block ),
-			sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory_uri(), $prefix, $block, $block),
-			array(),
-			null,
-			'all'
-		);
-		// phpcs:enable
 	}
 
 	/**
@@ -537,7 +364,7 @@ class Deodar {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		$this->load_editor_blocks_styles();
+		$this->enqueuer->enqueue_blocks_styles( true );
 	}
 
 	/**
@@ -622,9 +449,9 @@ class Deodar {
 	 * @return void
 	 */
 	public function wp_enqueue_scripts() {
-		$this->load_styles();
-		$this->load_blocks_styles();
-		$this->load_scripts();
+		$this->enqueuer->enqueue_styles();
+		$this->enqueuer->enqueue_scripts();
+		$this->enqueuer->enqueue_blocks_styles( false );
 	}
 
 	/**

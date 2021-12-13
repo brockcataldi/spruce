@@ -39,12 +39,14 @@
  *  Menus [Done]
  *  Sidebars [Done]
  * 
- *  Refactor the plugin code make it more class based. []
+ *  Utility Functions File [Done]
+ * 
+ *  Refactor the plugin code make it more Object based. []
+ * 
  *  Add alternative plugin based styling for blocks (gravity forms, jetpack, etc). []
  *  Minimize the phpcs:disables []
  *  Field Groups Loader []
  *  Options Page(s) []
- *  Utility Functions [Done]
  *  Defer Stylesheets []
  *  Defer jQuery
  *  Defer JavaScripts

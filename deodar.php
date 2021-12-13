@@ -45,8 +45,6 @@ define(
 	)
 );
 
-// Including Various Utility Functions.
-require_once DEODAR_PLUGIN_DIR . 'deodar-functions.php';
 
 // Requiring the Base class for ACF Blocks.
 require_once DEODAR_PLUGIN_DIR . 'models/class-deodar-block.php';
@@ -63,12 +61,14 @@ require_once DEODAR_PLUGIN_DIR . 'models/class-deodar-post-type.php';
 // Requiring the abstract class for Taxonomies.
 require_once DEODAR_PLUGIN_DIR . 'models/class-deodar-taxonomy.php';
 
-//
-//
-//
+// Including Various Utility Functions.
+require_once DEODAR_PLUGIN_DIR . 'deodar-functions.php';
 
 // Including the Deodar Configuration Class.
 require_once DEODAR_PLUGIN_DIR . 'class-deodar-configuration.php';
+
+// Including the Deodar Enqueuer Class.
+require_once DEODAR_PLUGIN_DIR . 'class-deodar-enqueuer.php';
 
 // Including the Deodar Base Class.
 require_once DEODAR_PLUGIN_DIR . 'class-deodar.php';

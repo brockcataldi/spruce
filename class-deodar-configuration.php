@@ -4,6 +4,8 @@
  *
  * The configuration manager, via the basic and custom configuration files.
  *
+ * @package Deodar
+ * @subpackage Configuration
  * @since 1.0.0
  */
 
@@ -17,15 +19,25 @@
 class Deodar_Configuration {
 
 	/**
+	 * A string value in the config file for Automatic.
+	 */
+	const AUTOMATIC = 'auto';
+
+	/**
 	 * Whether or not the configuration file was successfully loaded.
 	 *
 	 * @var bool $configuration_loaded
 	 */
 	public bool $custom_configuration_loaded = false;
 
-    public function __construct(){
+	/**
+	 * Constructor for the Configuration. Initalizes the loading of the custom configuration.
+	 *
+	 * @since 1.0.0
+	 */
+	public function __construct() {
 		$this->custom_configuration_loaded = $this->load_configuration();
-    }
+	}
 
 	/**
 	 * Load the deodar.config.php file from the child theme
@@ -34,15 +46,17 @@ class Deodar_Configuration {
 	 *
 	 * @return bool whether or not the file was loaded successfully
 	 */
-    public function load_configuration(){
-        if ( true === include_file( get_stylesheet_directory() . '/deodar.config.php' ) ) {
+	public function load_configuration() {
+		if ( true === include_file( get_stylesheet_directory() . '/deodar.config.php' ) ) {
 			return defined( 'DEODAR_CONFIGURATION' );
 		}
 		return false;
-    }
+	}
 
 	/**
 	 * Get the configuration value from either the default or custom config file
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string|array $key the key or multidimensional key from the config.
 	 *
@@ -63,6 +77,8 @@ class Deodar_Configuration {
 	/**
 	 * Get the configuration value from either the default or custom config file recursively.
 	 * Returns null if nothing is found.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $key key from the config.
 	 * @param bool   $custom whether or not to even attempt to load it from the custom config file.
@@ -87,6 +103,8 @@ class Deodar_Configuration {
 	/**
 	 * Get the configuration value from either the default or custom config file, specifically an array based key.
 	 * Returns null if nothing is found.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param array $key multidimensional key from the config.
 	 * @param bool  $custom whether or not to even attempt to load it from the custom config file.

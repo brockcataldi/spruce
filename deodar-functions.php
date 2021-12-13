@@ -9,7 +9,6 @@
  * @since 1.0.0
  */
 
-
 /**
  * Scans directory based on path, removes the linux entries for up a directory and a current directory.
  *
