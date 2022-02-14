@@ -139,7 +139,7 @@ class Deodar {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
-		$this->enqueuer->enqueue_blocks_styles( true );
+		$this->enqueuer->enqueue_blocks_assets( true );
 	}
 
 	/**
@@ -208,7 +208,7 @@ class Deodar {
 	public function wp_enqueue_scripts() {
 		$this->enqueuer->enqueue_styles();
 		$this->enqueuer->enqueue_scripts();
-		$this->enqueuer->enqueue_blocks_styles( false );
+		$this->enqueuer->enqueue_blocks_assets( false );
 	}
 
 	/**

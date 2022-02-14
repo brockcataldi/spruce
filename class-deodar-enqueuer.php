@@ -51,22 +51,27 @@ class Deodar_Enqueuer {
 	 *
 	 * @return void
 	 */
-	private function enqueue_block_styles( string $prefix, string $block, bool $editor = false ) {
+	private function enqueue_block_assets( string $prefix, string $block, bool $editor = false ) {
 		if ( true === $editor || true === has_block( sprintf( '%s/%s', $prefix, $block ) ) ) {
-			// phpcs:disable
-			wp_enqueue_style(
-				sprintf( '%s-%s', $prefix, $block ),
-				sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory_uri(), $prefix, $block, $block),
-				array(),
-				null,
-				'all'
-			);
-			// phpcs:enable
+
+			$css_file_path = sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory(), $prefix, $block, $block );
+
+			if ( true === file_exists( $css_file_path ) ) {
+				// phpcs:disable
+				wp_enqueue_style(
+					sprintf( '%s-%s', $prefix, $block ),
+					sprintf( '%s/blocks/%s/%s/%s.build.css', get_stylesheet_directory_uri(), $prefix, $block, $block),
+					array(),
+					null,
+					'all'
+				);
+				// phpcs:enable
+			}
 		}
 	}
 
 	/**
-	 * Loading core block stylesheets, will be adapted for other block providers eventually.
+	 * Loading core block stylesheets.
 	 *
 	 * @since 1.0.0
 	 *
@@ -74,23 +79,29 @@ class Deodar_Enqueuer {
 	 *
 	 * @return void
 	 */
-	public function enqueue_blocks_styles( bool $editor = false ) {
-		$prefix               = 'core';
-		$block_loading_option = $this->configuration->get( array( 'blocks', $prefix ) );
+	public function enqueue_blocks_assets( bool $editor = false ) {
 
-		if ( 'array' === gettype( $block_loading_option ) ) {
+		$block_provider_option = $this->configuration->get( 'blocks' );
+		$block_providers       = array_keys( $block_provider_option );
+		$prefixes              = array_diff( $block_providers, array( 'acf' ) );
 
-			foreach ( $block_loading_option as $block ) {
-				$this->enqueue_block_styles( $prefix, $block );
-			}
-		} elseif ( Deodar_Configuration::AUTOMATIC === $block_loading_option ) {
+		foreach ( $prefixes as $prefix ) {
+			$block_loading_option = $block_provider_option[ $prefix ];
 
-			$entries = scan( get_stylesheet_directory() . '/blocks/' . $prefix );
+			if ( 'array' === gettype( $block_loading_option ) ) {
 
-			if ( false !== $entries ) {
-				foreach ( $entries as $entry ) {
-					if ( false === strpos( $entry, '.' ) ) {
-						$this->enqueue_block_styles( $prefix, $entry );
+				foreach ( $block_loading_option as $block ) {
+					$this->enqueue_block_assets( $prefix, $block );
+				}
+			} elseif ( Deodar_Configuration::AUTOMATIC === $block_loading_option ) {
+
+				$entries = scan( get_stylesheet_directory() . '/blocks/' . $prefix );
+
+				if ( false !== $entries ) {
+					foreach ( $entries as $entry ) {
+						if ( false === strpos( $entry, '.' ) ) {
+							$this->enqueue_block_assets( $prefix, $entry );
+						}
 					}
 				}
 			}
