@@ -155,3 +155,14 @@ function href( string $url, bool $echo = true ) {
 	}
 }
 
+/**
+ * Returns the name of the php template used on the page. Which includes the
+ * extension.
+ *
+ * @return string the template name.
+ */
+function get_template_name() {
+	global $template;
+
+	return basename( $template );
+}

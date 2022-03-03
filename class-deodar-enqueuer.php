@@ -109,6 +109,25 @@ class Deodar_Enqueuer {
 	}
 
 	/**
+	 * Enqueuing Javascript
+	 *
+	 * @since 1.0.0
+	 * 
+	 * @param array $script the script object.
+	 *
+	 * @return void
+	 */
+	private function enqueue_script( array $script ) {
+		wp_enqueue_script(
+			$script['name'],
+			( true === array_key_exists( 'file', $script ) ) ? sprintf( '%s/%s', get_stylesheet_directory_uri(), $script['file'] ) : $script['uri'],
+			( false === array_key_exists( 'dependencies', $script ) ) ? array() : $script['dependencies'],
+			( false === array_key_exists( 'version', $script ) ) ? null : $script['version'],
+			( false === array_key_exists( 'footer', $script ) ) ? false : $script['footer']
+		);
+	}
+
+	/**
 	 * Loading javascripts passed into the scripts config
 	 *
 	 * @since 1.0.0
@@ -123,25 +142,34 @@ class Deodar_Enqueuer {
 		}
 		foreach ( $scripts as $script ) {
 			if ( true === array_key_exists( 'name', $script ) ) {
-				if ( true === array_key_exists( 'file', $script ) ) {
-					wp_enqueue_script(
-						$script['name'],
-						sprintf( '%s/%s', get_stylesheet_directory_uri(), $script['file'] ),
-						( false === array_key_exists( 'dependencies', $script ) ) ? array() : $script['dependencies'],
-						( false === array_key_exists( 'version', $script ) ) ? null : $script['version'],
-						( false === array_key_exists( 'footer', $script ) ) ? false : $script['footer']
-					);
-				} elseif ( true === array_key_exists( 'uri', $script ) ) {
-					wp_enqueue_script(
-						$script['name'],
-						$script['uri'],
-						( false === array_key_exists( 'dependencies', $script ) ) ? array() : $script['dependencies'],
-						( false === array_key_exists( 'version', $script ) ) ? null : $script['version'],
-						( false === array_key_exists( 'footer', $script ) ) ? false : $script['footer']
-					);
+				if ( true === array_key_exists( 'template', $script ) ) {
+					if ( get_template_name() === $script['template'] ) {
+						$this->enqueue_script( $script );
+					}
+				} else {
+					$this->enqueue_script( $script );
 				}
 			}
 		}
+	}
+
+	/**
+	 * Enqueuing Stylesheet
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $style the style object.
+	 *
+	 * @return void
+	 */
+	private function enqueue_style( array $style ) {
+		wp_enqueue_style(
+			$style['name'],
+			( true === array_key_exists( 'file', $style ) ) ? sprintf( '%s/%s', get_stylesheet_directory_uri(), $style['file'] ) : $style['uri'],
+			( false === array_key_exists( 'dependencies', $style ) ) ? array() : $style['dependencies'],
+			( false === array_key_exists( 'version', $style ) ) ? null : $style['version'],
+			( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
+		);
 	}
 
 	/**
@@ -160,22 +188,12 @@ class Deodar_Enqueuer {
 
 		foreach ( $styles as $style ) {
 			if ( true === array_key_exists( 'name', $style ) ) {
-				if ( true === array_key_exists( 'file', $style ) ) {
-					wp_enqueue_style(
-						$style['name'],
-						sprintf( '%s/%s', get_stylesheet_directory_uri(), $style['file'] ),
-						( false === array_key_exists( 'dependencies', $style ) ) ? array() : $style['dependencies'],
-						( false === array_key_exists( 'version', $style ) ) ? null : $style['version'],
-						( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
-					);
-				} elseif ( true === array_key_exists( 'uri', $style ) ) {
-					wp_enqueue_style(
-						$style['name'],
-						$style['uri'],
-						( false === array_key_exists( 'dependencies', $style ) ) ? array() : $style['dependencies'],
-						( false === array_key_exists( 'version', $style ) ) ? null : $style['version'],
-						( false === array_key_exists( 'media', $style ) ) ? 'all' : $style['media']
-					);
+				if ( true === array_key_exists( 'template', $style ) ) {
+					if ( get_template_name() === $style['template'] ) {
+						$this->enqueue_style( $style );
+					}
+				} else {
+					$this->enqueue_style( $style );
 				}
 			}
 		}
